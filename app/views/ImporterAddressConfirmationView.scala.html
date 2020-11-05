@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import controllers.routes._
 @import models.Mode
+@import uk.gov.hmrc.play.views.html._
 
 @this(
         main_template: MainTemplate,
@@ -25,7 +26,7 @@
         link: components.link
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @pageHint = {
     <h2 class="heading-medium heading-medium-mb mt-0">
@@ -48,7 +49,7 @@
 @main_template(
     title = messages("importerAddressConfirmation.title")
 ) {
-
+@formHelper(action = ImporterAddressConfirmationController.onSubmit(mode), 'autoComplete -> "off") {
     @components.back_link()
 
     <div class="mb-30">
@@ -60,6 +61,7 @@
         <span class="pl-05">@link("", messages("importerAddressConfirmation.link1"))</span>
     @h4_2
 
+<div class="govuk-!-width-one-half">
     @govukSelect(Select(
         id = "sort",
         name = "sort",
@@ -79,8 +81,9 @@
             )
         )
     ))
-
+</div>
     <p>@link("", messages("importerAddressConfirmation.link2"))</p>
 
     @components.submit_button()
+}
 }

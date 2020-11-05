@@ -38,4 +38,16 @@ class ImporterAddressConfirmationController @Inject()(
     implicit request =>
       Ok(view())
   }
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+      form.bindFromRequest().fold(
+        formWithErrors =>
+          Future.successful(BadRequest(view(formWithErrors, mode))),
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(ImporterAddressConfirmationPage, value))
+            _              <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(ImporterAddressConfirmationPage, mode, updatedAnswers))
+      )
+  }
 }
